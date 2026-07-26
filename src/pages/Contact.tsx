@@ -36,8 +36,8 @@ export default function Contact() {
           You are booked for a callback
         </h1>
         <p className="mt-3 text-slate">
-          We will call you within one business day to set up your demo. It
-          takes about 20 minutes, on your own phone line.
+          We will call you within one business day to run your audit. It takes
+          about 20 minutes, on your own phone line.
         </p>
       </div>
     );
@@ -45,10 +45,10 @@ export default function Contact() {
 
   return (
     <div className="mx-auto max-w-xl px-4 py-20 sm:px-6 md:py-24">
-      <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">Book a demo</h1>
+      <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">Book your free audit</h1>
       <p className="mt-4 text-lg text-slate">
-        20 minutes with our team. Hear Sarah answer a call like yours, ask
-        anything, no commitment.
+        20 minutes with our team. We look at the calls you are missing, show
+        you the AI answering one, and you decide from there.
       </p>
 
       <form onSubmit={handleSubmit} noValidate className="mt-10 space-y-6">
@@ -70,7 +70,7 @@ export default function Contact() {
           className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-royal px-7 py-4 font-medium text-cream transition-[background-color,transform] hover:bg-royal-deep active:scale-[0.98] disabled:opacity-70 sm:w-auto"
         >
           {status === "submitting" && <CircleNotch size={18} className="animate-spin" />}
-          {status === "submitting" ? "Booking" : "Book my demo"}
+          {status === "submitting" ? "Booking" : "Book my free audit"}
         </button>
       </form>
     </div>

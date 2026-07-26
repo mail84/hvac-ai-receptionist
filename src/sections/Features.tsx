@@ -11,26 +11,28 @@ import {
 import Orb from "../components/Orb";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 
+/* One outcome per system: voice agent, missed call text back, online
+   booking, reviews. */
 const lines = [
   {
-    lead: "Book faster.",
-    body: "AI gets the contact info, the address, and what is wrong, then puts the job on your schedule.",
+    lead: "Never miss a call.",
+    body: "The AI voice agent answers 24/7, weekends and holidays included, and books the job on the spot.",
   },
   {
-    lead: "Never miss an emergency.",
-    body: "No heat, a gas smell, a leak. She knows what cannot wait and wakes your on call tech.",
+    lead: "Catch the ones that slip.",
+    body: "Any call you miss gets an instant text back, before the caller reaches the next company on the list.",
   },
   {
-    lead: "Qualify leads on the call.",
-    body: "Replacement inquiries get pre-qualified and pushed straight to your CRM.",
+    lead: "Let them book themselves.",
+    body: "Customers pick a slot from your booking link, and it lands straight in your calendar.",
+  },
+  {
+    lead: "Earn reviews without asking.",
+    body: "Every finished job triggers a review request, with follow up until the customer leaves one.",
   },
 ];
 
 const LABEL = "AI MAKING IT EASIER";
-
-/* Breathing room left between the last feature line and the section that
-   follows it, on phones. */
-const GAP_BELOW = 40;
 
 /* ---------------- Desktop: orb shrinks, lines surface beside it ---------------- */
 
@@ -45,13 +47,14 @@ function DesktopFeatures() {
   const orbOpacity = useTransform(scrollYProgress, [0, 0.35], [1, 0.85]);
 
   const ranges: [number, number][] = [
-    [0.14, 0.34],
-    [0.4, 0.6],
-    [0.66, 0.86],
+    [0.1, 0.26],
+    [0.3, 0.46],
+    [0.5, 0.66],
+    [0.7, 0.86],
   ];
 
   return (
-    <div ref={ref} className="relative h-[300vh]">
+    <div ref={ref} className="relative h-[340vh]">
       <div className="sticky top-16 grid h-[calc(100dvh-4rem)] grid-cols-[5fr_7fr] items-center gap-12 px-6">
         <motion.div style={{ scale: orbScale, opacity: orbOpacity }} className="flex justify-center">
           <Orb size="min(30vw, 340px)" />
@@ -111,7 +114,9 @@ function DesktopLine({
 function MobileFeatures() {
   const ref = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLParagraphElement>(null);
-  const [shown, setShown] = useState(0);
+  const [stage, setStage] = useState(0);
+  const titleUp = stage >= 1;
+  const shown = Math.max(0, stage - 1);
   const entered = useInView(labelRef, { once: true, amount: 0.6 });
 
   const { scrollYProgress } = useScroll({
@@ -119,34 +124,13 @@ function MobileFeatures() {
     offset: ["start start", "end end"],
   });
 
-  const contentRef = useRef<HTMLDivElement>(null);
   const [vh, setVh] = useState(() =>
     typeof window === "undefined" ? 800 : window.innerHeight
   );
-  /* How far the next section is pulled up to sit under the last line.
-     Measured rather than hardcoded: the copy wraps to different heights on
-     different widths, so a fixed value that closes the gap on a 390 wide
-     phone leaves it gaping on a 430. */
-  const [pull, setPull] = useState(0);
-
   useEffect(() => {
-    const el = contentRef.current;
-    if (!el) return;
-    const measure = () => {
-      setVh(window.innerHeight);
-      const contentH = el.getBoundingClientRect().height;
-      /* 64 sticky offset + 48 top padding above the content. */
-      const leftover = window.innerHeight - 112 - contentH - GAP_BELOW;
-      setPull(Math.max(0, Math.round(leftover)));
-    };
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    window.addEventListener("resize", measure);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", measure);
-    };
+    const onResize = () => setVh(window.innerHeight);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
   /* The title's move is a fixed eased curve, not a scroll-linked one.
@@ -159,29 +143,32 @@ function MobileFeatures() {
   /* The last line lands late so the section releases into the demo almost
      as soon as the stack completes, rather than holding on a screen where
      nothing changes. */
+  /* Stage 0 is the title alone, centred. Stage 1 lifts it to the top with
+     nothing else on screen, so it has the move to itself. Lines only start
+     at stage 2. Without that window the first line faded in at its layout
+     slot near the top while the title was still transformed down the
+     screen, so the line appeared above the title and the title then flew
+     up past it. */
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    const next = v < 0.32 ? 0 : v < 0.62 ? 1 : v < 0.92 ? 2 : 3;
-    setShown((prev) => (prev === next ? prev : next));
+    const next =
+      v < 0.13 ? 0 : v < 0.29 ? 1 : v < 0.46 ? 2 : v < 0.62 ? 3 : v < 0.78 ? 4 : 5;
+    setStage((prev) => (prev === next ? prev : next));
   });
 
   return (
-    <div
-      ref={ref}
-      className="relative h-[175vh]"
-      /* Negative bottom margin lifts the following section up under the
-         last line, closing the height the pinned box cannot use. */
-      style={{ marginBottom: pull ? -pull : undefined }}
-    >
-      {/* Alignment never changes, and every line occupies its layout slot
-          from the start even while invisible. Both together mean nothing
-          on screen can move as the sequence plays: the lines animate with
-          opacity and transform only, which do not affect layout. */}
+    <div ref={ref} className="relative h-[215vh]">
+      {/* Alignment never changes. Once the title has settled it holds that
+          exact position for the rest of the section, and each line appends
+          below it. Switching this container's justification when the last
+          line arrived slid the whole group downward mid-sequence, which
+          read as the layout lurching rather than building. Leftover height
+          at the bottom is absorbed by the demo section pulling up, not by
+          re-centering this one. */}
       <div className="sticky top-16 flex h-[calc(100dvh-4rem)] flex-col items-start px-5 pt-12">
-        <div ref={contentRef} className="w-full">
         <motion.div
           animate={{
-            y: shown === 0 ? labelTravel : 0,
-            scale: shown === 0 ? 1 : 0.72,
+            y: titleUp ? 0 : labelTravel,
+            scale: titleUp ? 0.72 : 1,
           }}
           transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
           className="w-full origin-center"
@@ -198,24 +185,21 @@ function MobileFeatures() {
           </motion.p>
         </motion.div>
 
-        <div className="mt-9 w-full max-w-sm space-y-7">
-          {lines.map((line, i) => (
+        <motion.div layout className="mt-8 w-full max-w-sm space-y-6">
+          {lines.slice(0, shown).map((line) => (
             <motion.p
               key={line.lead}
-              initial={false}
-              animate={{
-                opacity: shown > i ? 1 : 0,
-                y: shown > i ? 0 : 22,
-              }}
+              layout
+              initial={{ opacity: 0, y: 24, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.75, ease: [0.23, 1, 0.32, 1] }}
-              className="text-left text-[21px] leading-snug"
+              className="text-left text-[19px] leading-snug"
             >
               <span className="font-semibold">{line.lead}</span>{" "}
               <span className="text-slate">{line.body}</span>
             </motion.p>
           ))}
-        </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

@@ -84,7 +84,7 @@ export default function CostCompare() {
             to="/contact"
             className="shrink-0 rounded-full bg-cream px-6 py-3 text-sm font-semibold text-royal transition-transform duration-150 ease-[var(--ease-out)] active:scale-[0.97]"
           >
-            Book a Demo
+            Book Free Audit
           </Link>
         </div>
       </div>

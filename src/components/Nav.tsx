@@ -54,7 +54,7 @@ export default function Nav() {
             to="/contact"
             className="rounded-full bg-royal px-5 py-2.5 text-sm font-medium text-cream transition-[background-color,transform] hover:bg-royal-deep active:scale-[0.98]"
           >
-            Book a Demo
+            Book Free Audit
           </Link>
         </div>
 
@@ -93,7 +93,7 @@ export default function Nav() {
               onClick={() => setOpen(false)}
               className="mt-2 rounded-full bg-royal px-5 py-3 text-center text-[15px] font-medium text-cream"
             >
-              Book a Demo
+              Book Free Audit
             </Link>
           </div>
         </div>

@@ -59,7 +59,7 @@ export default function Solutions() {
           to="/contact"
           className="inline-block rounded-full bg-royal px-8 py-4 font-medium text-cream transition-[background-color,transform] hover:bg-royal-deep active:scale-[0.98]"
         >
-          Book a Demo
+          Book Free Audit
         </Link>
       </div>
     </div>

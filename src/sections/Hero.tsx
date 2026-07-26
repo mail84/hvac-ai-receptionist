@@ -46,11 +46,11 @@ export default function Hero() {
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-16 pt-14 sm:px-6 md:pt-20">
         <div className="max-w-3xl">
           <h1 className="text-4xl font-semibold leading-[1.06] tracking-tight md:text-5xl lg:text-[3.4rem]">
-            HVAC 24/7 AI Answering Service &amp; Virtual Receptionist
+            The complete AI front desk for HVAC companies
           </h1>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-slate">
-            Front desk made easier. Call Sarah, a calm virtual receptionist who
-            triages emergencies, captures details, and books your jobs.
+            Answers every call, texts back the ones you miss, books jobs online,
+            and earns you reviews after each one.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a

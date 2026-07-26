@@ -7,7 +7,7 @@ const columns = [
     items: [
       { label: "Solutions", to: "/solutions" },
       { label: "Testimonials", to: "/testimonials" },
-      { label: "Book a Demo", to: "/contact" },
+      { label: "Book Free Audit", to: "/contact" },
     ],
   },
   {

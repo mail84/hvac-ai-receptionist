@@ -1,6 +1,7 @@
 import Hero from "../sections/Hero";
 import Demo from "../sections/Demo";
 import Features from "../sections/Features";
+import RevenueImpact from "../sections/RevenueImpact";
 import Testimonials from "../sections/Testimonials";
 import StatCounter from "../sections/StatCounter";
 import CostCompare from "../sections/CostCompare";
@@ -12,6 +13,7 @@ export default function Home() {
     <>
       <Hero />
       <Features />
+      <RevenueImpact />
       <Demo />
       <Testimonials />
       <StatCounter />

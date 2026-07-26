@@ -36,7 +36,7 @@ export default function TestimonialsPage() {
           to="/contact"
           className="mt-6 inline-block rounded-full bg-cream px-7 py-3.5 font-semibold text-royal transition-transform active:scale-[0.98]"
         >
-          Book a Demo
+          Book Free Audit
         </Link>
       </div>
     </div>

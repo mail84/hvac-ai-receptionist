@@ -134,8 +134,7 @@ function MobileFeatures() {
 
   /* The last line lands late, so the section releases into the demo almost
      as soon as the stack is complete rather than holding on an empty
-     screen. Once all three are up the group centres, which splits the
-     leftover height instead of piling it under the last line. */
+     screen. */
   useMotionValueEvent(scrollYProgress, "change", (v) => {
     const next = v < 0.28 ? 0 : v < 0.52 ? 1 : v < 0.76 ? 2 : 3;
     setShown((prev) => (prev === next ? prev : next));
@@ -143,11 +142,14 @@ function MobileFeatures() {
 
   return (
     <div ref={ref} className="relative h-[200vh]">
-      <div
-        className={`sticky top-16 flex h-[calc(100dvh-4rem)] flex-col items-start px-5 ${
-          shown === 3 ? "justify-center pb-4" : "pt-12"
-        }`}
-      >
+      {/* Alignment never changes. Once the title has settled it holds that
+          exact position for the rest of the section, and each line appends
+          below it. Switching this container's justification when the last
+          line arrived slid the whole group downward mid-sequence, which
+          read as the layout lurching rather than building. Leftover height
+          at the bottom is absorbed by the demo section pulling up, not by
+          re-centering this one. */}
+      <div className="sticky top-16 flex h-[calc(100dvh-4rem)] flex-col items-start px-5 pt-12">
         <motion.div style={{ y: labelY, scale: labelScale }} className="w-full origin-center">
           <motion.p
             ref={labelRef}

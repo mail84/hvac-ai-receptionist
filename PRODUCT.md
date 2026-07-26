@@ -59,9 +59,11 @@ Explicitly undecided — do not state these as fact in any surface until confirm
 
 ## Brand Commitments
 
-- A **business name and logo exist and are binding**, but were not supplied during init. Both are required before building any surface. Do not invent a product name or generate a placeholder logo.
+- **Company name: Lead Digital.** Confirmed. Domain is leaddigital.org.
+- **Logo: still outstanding.** The nav and footer currently pair the wordmark with the orb mark as a stand-in. Replace when the real logo file is supplied.
+- **"Sarah"** is used through the site as the name of the AI receptionist itself, distinct from the company. This is currently inconsistent: some surfaces say Sarah, others say "our AI". Needs a single decision.
 
-No voice, personality, or identity constraints have been stated yet.
+No voice, personality, or tone constraints have been stated yet.
 
 ## Evidence on Hand
 

@@ -57,7 +57,7 @@ export default function Hero() {
               href="/#demo"
               className="rounded-full bg-royal px-7 py-3.5 font-medium text-cream transition-[background-color,transform] hover:bg-royal-deep active:scale-[0.98]"
             >
-              Talk to Sarah
+              Talk to our AI
             </a>
             <Link
               to="/contact"

@@ -26,7 +26,7 @@ export default function Footer() {
         <div>
           <div className="flex items-center gap-2.5">
             <span aria-hidden className="block h-6 w-6 rounded-full orb-surface" />
-            <span className="text-lg font-semibold tracking-tight">Sarah</span>
+            <span className="text-lg font-semibold tracking-tight">Lead Digital</span>
           </div>
           <p className="mt-3 max-w-xs text-sm leading-relaxed text-slate">
             The 24/7 AI answering service built for HVAC companies. Every call
@@ -66,7 +66,7 @@ export default function Footer() {
       </div>
       <div className="border-t border-line">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-5 text-xs text-slate sm:px-6">
-          <span>Sarah AI receptionist for HVAC</span>
+          <span>Lead Digital AI receptionist for HVAC</span>
           <a href="mailto:mail@leaddigital.org" className="transition-colors hover:text-royal">
             mail@leaddigital.org
           </a>

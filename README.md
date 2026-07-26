@@ -62,8 +62,11 @@ CSS filter, since a fullscreen `hue-rotate` repaints every frame.
 
 These are stand-ins. None of them are real.
 
-- **Brand name and logo.** "Sarah" is a placeholder wordmark in the nav,
-  footer, and favicon. No real name or logo was supplied.
+- **Logo.** The company name, Lead Digital, is real and in place. The circular
+  orb mark beside it in the nav and footer is a stand-in for a real logo file.
+- **Agent naming is inconsistent.** The nav says Lead Digital, the hero CTA
+  says "Talk to our AI", and the hero subtext, FAQ, Solutions, and Contact
+  pages still call the receptionist "Sarah". Pick one and apply it.
 - **Reviews.** Everything in `src/data/testimonials.ts` is invented, and is
   marked as such in that file. Replace with real reviews quoted verbatim,
   with permission and attribution.

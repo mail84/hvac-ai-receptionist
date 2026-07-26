@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { List, X } from "@phosphor-icons/react";
 
-/* TODO: replace wordmark with the real logo file once provided. */
+/* TODO: swap the orb mark for the real logo file once provided. */
 function Wordmark() {
   return (
-    <Link to="/" className="flex items-center gap-2.5" aria-label="Sarah, home">
+    <Link to="/" className="flex items-center gap-2.5" aria-label="Lead Digital, home">
       <span aria-hidden className="block h-6 w-6 rounded-full orb-surface" />
-      <span className="text-lg font-semibold tracking-tight">Sarah</span>
+      <span className="text-lg font-semibold tracking-tight">Lead Digital</span>
     </Link>
   );
 }

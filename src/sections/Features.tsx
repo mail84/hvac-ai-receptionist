@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   motion,
   useScroll,
@@ -14,17 +14,22 @@ import { useMediaQuery } from "../hooks/useMediaQuery";
 const lines = [
   {
     lead: "Book faster.",
-    body: "She gets the address, the unit, and what is wrong, then puts the job on your schedule.",
+    body: "AI gets the contact info, the address, and what is wrong, then puts the job on your schedule.",
   },
   {
     lead: "Never miss an emergency.",
-    body: "No heat, a gas smell, a leak. She knows what cannot wait and wakes your on-call tech.",
+    body: "No heat, a gas smell, a leak. She knows what cannot wait and wakes your on call tech.",
   },
   {
     lead: "Qualify leads on the call.",
     body: "Replacement inquiries get pre-qualified and pushed straight to your CRM.",
   },
 ];
+
+/* Closing beat. Lands after the three capabilities, both to tie them
+   together and to occupy the space that was sitting empty before the
+   demo section. */
+const CLOSER = "All of it, while the customer is still on the phone.";
 
 const LABEL = "AI MAKING IT EASIER";
 
@@ -39,15 +44,17 @@ function DesktopFeatures() {
 
   const orbScale = useTransform(scrollYProgress, [0, 0.35], [1, 0.55]);
   const orbOpacity = useTransform(scrollYProgress, [0, 0.35], [1, 0.85]);
+  const closerOpacity = useTransform(scrollYProgress, [0.78, 0.93], [0, 1]);
+  const closerY = useTransform(scrollYProgress, [0.78, 0.93], [16, 0]);
 
   const ranges: [number, number][] = [
-    [0.15, 0.32],
-    [0.38, 0.55],
-    [0.6, 0.77],
+    [0.12, 0.3],
+    [0.34, 0.52],
+    [0.56, 0.74],
   ];
 
   return (
-    <div ref={ref} className="relative h-[280vh]">
+    <div ref={ref} className="relative h-[300vh]">
       <div className="sticky top-16 grid h-[calc(100dvh-4rem)] grid-cols-[5fr_7fr] items-center gap-12 px-6">
         <motion.div style={{ scale: orbScale, opacity: orbOpacity }} className="flex justify-center">
           <Orb size="min(30vw, 340px)" />
@@ -60,7 +67,7 @@ function DesktopFeatures() {
           >
             {LABEL}
           </p>
-          <div className="mt-8 space-y-10">
+          <div className="mt-8 space-y-9">
             {lines.map((line, i) => (
               <DesktopLine
                 key={line.lead}
@@ -69,6 +76,12 @@ function DesktopFeatures() {
                 range={ranges[i]}
               />
             ))}
+            <motion.p
+              style={{ opacity: closerOpacity, y: closerY }}
+              className="text-xl font-medium text-royal lg:text-2xl"
+            >
+              {CLOSER}
+            </motion.p>
           </div>
         </div>
       </div>
@@ -95,77 +108,90 @@ function DesktopLine({
   );
 }
 
-/* ---------------- Mobile: no orb, lines accumulate into a stack ---------------- */
+/* ---------------- Mobile: title rises, then the stack builds ---------------- */
 
 /*
-  The label leads at full size, then settles as the first line arrives.
-  Each line enters in turn and stays, so the section builds a stack rather
-  than swapping one line for another and leaving the screen empty. Only
-  four discrete renders across the whole scroll, so this is state rather
-  than a per-frame motion value. The group stays vertically centered as it
-  grows, which is what removes the dead space.
+  The title's travel from centre to top is driven straight off scroll
+  position rather than flipped by a state change, so it rises and shrinks
+  gradually under the visitor's thumb instead of snapping the moment a
+  threshold is crossed. Only the lines below use discrete state, since
+  they need to mount into layout as they arrive.
 */
 function MobileFeatures() {
   const ref = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLParagraphElement>(null);
   const [shown, setShown] = useState(0);
-  /* Fires as the title scrolls into view, so it rises into place rather
-     than being pre-painted and waiting there. */
   const entered = useInView(labelRef, { once: true, amount: 0.6 });
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end end"],
   });
 
-  /* First line lands almost immediately, so the section responds to the
-     very first flick rather than making the visitor scroll into a dead
-     zone waiting for something to happen. The last line arrives at 0.68,
-     leaving only a short hold before the section releases. */
+  /* Travel distance has to be a plain number. Motion interpolates px
+     smoothly but cannot tween between vh strings, which makes the title
+     jump from one end to the other instead of gliding. */
+  const [vh, setVh] = useState(() =>
+    typeof window === "undefined" ? 800 : window.innerHeight
+  );
+  useEffect(() => {
+    const onResize = () => setVh(window.innerHeight);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  /* Continuous, so there is no jump: the title is wherever the scroll
+     says it is. Settles before the first line arrives. */
+  const labelY = useTransform(scrollYProgress, [0, 0.26], [vh * 0.34, 0]);
+  const labelScale = useTransform(scrollYProgress, [0, 0.26], [1, 0.72]);
+
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    const next = v < 0.09 ? 0 : v < 0.42 ? 1 : v < 0.74 ? 2 : 3;
+    const next = v < 0.28 ? 0 : v < 0.5 ? 1 : v < 0.7 ? 2 : v < 0.87 ? 3 : 4;
     setShown((prev) => (prev === next ? prev : next));
   });
 
   return (
-    <div ref={ref} className="relative h-[170vh]">
-      {/* The label is the section title: it arrives centred in the middle
-          of the screen, then shrinks and rises to make room as the lines
-          build beneath it. The lines themselves stay left aligned. */}
-      <div
-        className={`sticky top-16 flex h-[calc(100dvh-4rem)] flex-col items-start px-5 ${
-          shown === 0 ? "justify-center" : "justify-start pt-12"
-        }`}
-      >
-        <motion.p
-          ref={labelRef}
-          layout
-          initial={{ opacity: 0, y: 34, scale: 0.88 }}
-          animate={{
-            opacity: entered ? 1 : 0,
-            y: entered ? 0 : 34,
-            scale: shown === 0 ? (entered ? 1 : 0.88) : 0.72,
-          }}
-          transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-          className="w-full origin-center whitespace-nowrap text-center text-[clamp(18px,5.4vw,23px)] font-bold uppercase leading-tight tracking-[0.14em] text-ink"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          {LABEL}
-        </motion.p>
+    <div ref={ref} className="relative h-[220vh]">
+      <div className="sticky top-16 flex h-[calc(100dvh-4rem)] flex-col items-start px-5 pt-12">
+        <motion.div style={{ y: labelY, scale: labelScale }} className="w-full origin-center">
+          <motion.p
+            ref={labelRef}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: entered ? 1 : 0, y: entered ? 0 : 30 }}
+            transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
+            className="w-full whitespace-nowrap text-center text-[clamp(18px,5.4vw,23px)] font-bold uppercase leading-tight tracking-[0.14em] text-ink"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            {LABEL}
+          </motion.p>
+        </motion.div>
 
         <motion.div layout className="mt-9 w-full max-w-sm space-y-7">
-          {lines.slice(0, shown).map((line) => (
+          {lines.slice(0, Math.min(shown, 3)).map((line) => (
             <motion.p
               key={line.lead}
               layout
-              initial={{ opacity: 0, y: 26, scale: 0.94 }}
+              initial={{ opacity: 0, y: 24, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.55, ease: [0.23, 1, 0.32, 1] }}
+              transition={{ duration: 0.75, ease: [0.23, 1, 0.32, 1] }}
               className="text-left text-[21px] leading-snug"
             >
               <span className="font-semibold">{line.lead}</span>{" "}
               <span className="text-slate">{line.body}</span>
             </motion.p>
           ))}
+
+          {shown >= 4 && (
+            <motion.p
+              layout
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.75, ease: [0.23, 1, 0.32, 1] }}
+              className="text-left text-[19px] font-medium leading-snug text-royal"
+            >
+              {CLOSER}
+            </motion.p>
+          )}
         </motion.div>
       </div>
     </div>
@@ -191,6 +217,7 @@ function StaticFeatures() {
               <span className="text-slate">{line.body}</span>
             </p>
           ))}
+          <p className="text-lg font-medium text-royal">{CLOSER}</p>
         </div>
       </div>
     </section>

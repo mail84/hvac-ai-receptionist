@@ -115,9 +115,6 @@ function MobileFeatures() {
     offset: ["start start", "end end"],
   });
 
-  /* Travel distance has to be a plain number. Motion interpolates px
-     smoothly but cannot tween between vh strings, which makes the title
-     jump from one end to the other instead of gliding. */
   const [vh, setVh] = useState(() =>
     typeof window === "undefined" ? 800 : window.innerHeight
   );
@@ -127,21 +124,23 @@ function MobileFeatures() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  /* Continuous, so there is no jump: the title is wherever the scroll
-     says it is. Settles before the first line arrives. */
-  const labelY = useTransform(scrollYProgress, [0, 0.26], [vh * 0.34, 0]);
-  const labelScale = useTransform(scrollYProgress, [0, 0.26], [1, 0.72]);
+  /* The title's move is a fixed eased curve, not a scroll-linked one.
+     Tying it directly to scroll position means it inherits every stutter
+     in the visitor's thumb, which reads as jitter on a phone. Playing a
+     set curve on the way past means it moves the same smooth way every
+     time regardless of how the page is scrolled. */
+  const labelTravel = vh * 0.32;
 
-  /* The last line lands late, so the section releases into the demo almost
-     as soon as the stack is complete rather than holding on an empty
-     screen. */
+  /* The last line lands late so the section releases into the demo almost
+     as soon as the stack completes, rather than holding on a screen where
+     nothing changes. */
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    const next = v < 0.28 ? 0 : v < 0.52 ? 1 : v < 0.76 ? 2 : 3;
+    const next = v < 0.32 ? 0 : v < 0.62 ? 1 : v < 0.92 ? 2 : 3;
     setShown((prev) => (prev === next ? prev : next));
   });
 
   return (
-    <div ref={ref} className="relative h-[200vh]">
+    <div ref={ref} className="relative h-[175vh]">
       {/* Alignment never changes. Once the title has settled it holds that
           exact position for the rest of the section, and each line appends
           below it. Switching this container's justification when the last
@@ -150,7 +149,14 @@ function MobileFeatures() {
           at the bottom is absorbed by the demo section pulling up, not by
           re-centering this one. */}
       <div className="sticky top-16 flex h-[calc(100dvh-4rem)] flex-col items-start px-5 pt-12">
-        <motion.div style={{ y: labelY, scale: labelScale }} className="w-full origin-center">
+        <motion.div
+          animate={{
+            y: shown === 0 ? labelTravel : 0,
+            scale: shown === 0 ? 1 : 0.72,
+          }}
+          transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
+          className="w-full origin-center"
+        >
           <motion.p
             ref={labelRef}
             initial={{ opacity: 0, y: 30 }}

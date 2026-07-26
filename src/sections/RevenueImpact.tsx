@@ -64,18 +64,30 @@ function Counter({ to, run }: { to: number; run: boolean }) {
 
 export default function RevenueImpact() {
   const sectionRef = useRef<HTMLElement>(null);
-  const inView = useInView(sectionRef, { once: true, amount: 0.25 });
+  const cueRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
 
-  /* Tiles and the arrows between them arrive in reading order, so the
-     sequence reads as one number leading to the next rather than three
-     unrelated figures. Opacity and transform only, so nothing reflows. */
+  /* Held back until the heading reaches the middle of the screen. Anchoring
+     to the top of the section fired it while the last feature line was
+     still arriving, so the two sequences overlapped. The negative margins
+     shrink the detection band to the middle of the viewport, which by then
+     is well past the feature section releasing. */
+  const inView = useInView(cueRef, {
+    once: true,
+    margin: "-45% 0px -25% 0px",
+  });
+
+  /* Fade and scale, no vertical travel. Sliding upward on entry reads as
+     the content being dragged by the scroll rather than arriving on its
+     own. Scale starts at 0.94 rather than 0: nothing appears out of
+     nothing. Order is heading, then the figures in reading order, so the
+     sequence reads as one number leading to the next. */
   const enter = (delay: number) =>
     reduce
       ? {}
       : {
-          initial: { opacity: 0, y: 22 },
-          animate: inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 },
+          initial: { opacity: 0, scale: 0.94 },
+          animate: inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.94 },
           transition: { duration: 0.7, delay, ease: EASE },
         };
 
@@ -85,18 +97,20 @@ export default function RevenueImpact() {
        cannot reclaim. */
     <section ref={sectionRef} className="-mt-48 pb-20 pt-0 md:mt-0 md:py-28">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
-        <p
-          className="text-[12px] font-bold uppercase tracking-[0.18em] text-royal"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          Average client results
-        </p>
-        <h2 className="mt-3 text-3xl font-semibold tracking-tight md:text-5xl">
-          What you can expect
-        </h2>
-        <p className="mt-3 max-w-lg text-lg text-slate">
-          Stronger reviews, plus the revenue you are currently missing.
-        </p>
+        <motion.div ref={cueRef} {...enter(0)}>
+          <p
+            className="text-[12px] font-bold uppercase tracking-[0.18em] text-royal"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Average client results
+          </p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight md:text-5xl">
+            What you can expect
+          </h2>
+          <p className="mt-3 max-w-lg text-lg text-slate">
+            Stronger reviews, plus the revenue you are currently missing.
+          </p>
+        </motion.div>
 
         {/* Vertical on phones with the arrows pointing down, horizontal from
             md up. The arrow is a real step in the sequence, not decoration. */}
@@ -104,7 +118,7 @@ export default function RevenueImpact() {
           {steps.map((step, i) => (
             <div key={step.label} className="contents">
               <motion.div
-                {...enter(i * 0.16)}
+                {...enter(0.25 + i * 0.16)}
                 className="flex-1 rounded-2xl border border-line bg-white/70 px-6 py-7 text-center"
               >
                 <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-royal">
@@ -119,7 +133,7 @@ export default function RevenueImpact() {
 
               {i < steps.length - 1 && (
                 <motion.div
-                  {...enter(i * 0.16 + 0.1)}
+                  {...enter(0.35 + i * 0.16)}
                   aria-hidden
                   className="flex shrink-0 items-center justify-center text-royal"
                 >
@@ -132,7 +146,7 @@ export default function RevenueImpact() {
         </div>
 
         <motion.div
-          {...enter(0.5)}
+          {...enter(0.75)}
           className="mt-10 flex flex-col items-start gap-5 rounded-2xl bg-royal px-7 py-8 text-cream md:flex-row md:items-center md:gap-7 md:px-9"
         >
           <ShieldCheck size={44} weight="light" className="shrink-0" />
@@ -147,7 +161,7 @@ export default function RevenueImpact() {
           </div>
         </motion.div>
 
-        <motion.div {...enter(0.6)} className="mt-10 flex justify-center">
+        <motion.div {...enter(0.88)} className="mt-10 flex justify-center">
           <Link
             to="/contact"
             className="rounded-full bg-royal px-8 py-4 text-center font-medium text-cream transition-[background-color,transform] duration-150 ease-[var(--ease-out)] hover:bg-royal-deep active:scale-[0.97]"

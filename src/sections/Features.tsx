@@ -28,6 +28,10 @@ const lines = [
 
 const LABEL = "AI MAKING IT EASIER";
 
+/* Breathing room left between the last feature line and the section that
+   follows it, on phones. */
+const GAP_BELOW = 40;
+
 /* ---------------- Desktop: orb shrinks, lines surface beside it ---------------- */
 
 function DesktopFeatures() {
@@ -115,13 +119,34 @@ function MobileFeatures() {
     offset: ["start start", "end end"],
   });
 
+  const contentRef = useRef<HTMLDivElement>(null);
   const [vh, setVh] = useState(() =>
     typeof window === "undefined" ? 800 : window.innerHeight
   );
+  /* How far the next section is pulled up to sit under the last line.
+     Measured rather than hardcoded: the copy wraps to different heights on
+     different widths, so a fixed value that closes the gap on a 390 wide
+     phone leaves it gaping on a 430. */
+  const [pull, setPull] = useState(0);
+
   useEffect(() => {
-    const onResize = () => setVh(window.innerHeight);
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    const el = contentRef.current;
+    if (!el) return;
+    const measure = () => {
+      setVh(window.innerHeight);
+      const contentH = el.getBoundingClientRect().height;
+      /* 64 sticky offset + 48 top padding above the content. */
+      const leftover = window.innerHeight - 112 - contentH - GAP_BELOW;
+      setPull(Math.max(0, Math.round(leftover)));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
   }, []);
 
   /* The title's move is a fixed eased curve, not a scroll-linked one.
@@ -140,15 +165,19 @@ function MobileFeatures() {
   });
 
   return (
-    <div ref={ref} className="relative h-[175vh]">
-      {/* Alignment never changes. Once the title has settled it holds that
-          exact position for the rest of the section, and each line appends
-          below it. Switching this container's justification when the last
-          line arrived slid the whole group downward mid-sequence, which
-          read as the layout lurching rather than building. Leftover height
-          at the bottom is absorbed by the demo section pulling up, not by
-          re-centering this one. */}
+    <div
+      ref={ref}
+      className="relative h-[175vh]"
+      /* Negative bottom margin lifts the following section up under the
+         last line, closing the height the pinned box cannot use. */
+      style={{ marginBottom: pull ? -pull : undefined }}
+    >
+      {/* Alignment never changes, and every line occupies its layout slot
+          from the start even while invisible. Both together mean nothing
+          on screen can move as the sequence plays: the lines animate with
+          opacity and transform only, which do not affect layout. */}
       <div className="sticky top-16 flex h-[calc(100dvh-4rem)] flex-col items-start px-5 pt-12">
+        <div ref={contentRef} className="w-full">
         <motion.div
           animate={{
             y: shown === 0 ? labelTravel : 0,
@@ -169,13 +198,15 @@ function MobileFeatures() {
           </motion.p>
         </motion.div>
 
-        <motion.div layout className="mt-9 w-full max-w-sm space-y-7">
-          {lines.slice(0, shown).map((line) => (
+        <div className="mt-9 w-full max-w-sm space-y-7">
+          {lines.map((line, i) => (
             <motion.p
               key={line.lead}
-              layout
-              initial={{ opacity: 0, y: 24, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
+              initial={false}
+              animate={{
+                opacity: shown > i ? 1 : 0,
+                y: shown > i ? 0 : 22,
+              }}
               transition={{ duration: 0.75, ease: [0.23, 1, 0.32, 1] }}
               className="text-left text-[21px] leading-snug"
             >
@@ -183,7 +214,8 @@ function MobileFeatures() {
               <span className="text-slate">{line.body}</span>
             </motion.p>
           ))}
-        </motion.div>
+        </div>
+        </div>
       </div>
     </div>
   );

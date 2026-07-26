@@ -33,7 +33,7 @@ export default function Demo() {
   return (
     <section
       id="demo"
-      className="relative -mt-48 scroll-mt-16 overflow-hidden pb-16 pt-0 md:mt-0 md:pb-28 md:pt-24"
+      className="relative scroll-mt-16 overflow-hidden pb-16 pt-0 md:pb-28 md:pt-24"
     >
       <div
         aria-hidden

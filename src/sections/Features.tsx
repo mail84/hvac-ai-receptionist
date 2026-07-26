@@ -26,11 +26,6 @@ const lines = [
   },
 ];
 
-/* Closing beat. Lands after the three capabilities, both to tie them
-   together and to occupy the space that was sitting empty before the
-   demo section. */
-const CLOSER = "All of it, while the customer is still on the phone.";
-
 const LABEL = "AI MAKING IT EASIER";
 
 /* ---------------- Desktop: orb shrinks, lines surface beside it ---------------- */
@@ -44,13 +39,11 @@ function DesktopFeatures() {
 
   const orbScale = useTransform(scrollYProgress, [0, 0.35], [1, 0.55]);
   const orbOpacity = useTransform(scrollYProgress, [0, 0.35], [1, 0.85]);
-  const closerOpacity = useTransform(scrollYProgress, [0.78, 0.93], [0, 1]);
-  const closerY = useTransform(scrollYProgress, [0.78, 0.93], [16, 0]);
 
   const ranges: [number, number][] = [
-    [0.12, 0.3],
-    [0.34, 0.52],
-    [0.56, 0.74],
+    [0.14, 0.34],
+    [0.4, 0.6],
+    [0.66, 0.86],
   ];
 
   return (
@@ -76,12 +69,6 @@ function DesktopFeatures() {
                 range={ranges[i]}
               />
             ))}
-            <motion.p
-              style={{ opacity: closerOpacity, y: closerY }}
-              className="text-xl font-medium text-royal lg:text-2xl"
-            >
-              {CLOSER}
-            </motion.p>
           </div>
         </div>
       </div>
@@ -145,14 +132,22 @@ function MobileFeatures() {
   const labelY = useTransform(scrollYProgress, [0, 0.26], [vh * 0.34, 0]);
   const labelScale = useTransform(scrollYProgress, [0, 0.26], [1, 0.72]);
 
+  /* The last line lands late, so the section releases into the demo almost
+     as soon as the stack is complete rather than holding on an empty
+     screen. Once all three are up the group centres, which splits the
+     leftover height instead of piling it under the last line. */
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    const next = v < 0.28 ? 0 : v < 0.5 ? 1 : v < 0.7 ? 2 : v < 0.87 ? 3 : 4;
+    const next = v < 0.28 ? 0 : v < 0.52 ? 1 : v < 0.76 ? 2 : 3;
     setShown((prev) => (prev === next ? prev : next));
   });
 
   return (
-    <div ref={ref} className="relative h-[220vh]">
-      <div className="sticky top-16 flex h-[calc(100dvh-4rem)] flex-col items-start px-5 pt-12">
+    <div ref={ref} className="relative h-[200vh]">
+      <div
+        className={`sticky top-16 flex h-[calc(100dvh-4rem)] flex-col items-start px-5 ${
+          shown === 3 ? "justify-center pb-4" : "pt-12"
+        }`}
+      >
         <motion.div style={{ y: labelY, scale: labelScale }} className="w-full origin-center">
           <motion.p
             ref={labelRef}
@@ -167,7 +162,7 @@ function MobileFeatures() {
         </motion.div>
 
         <motion.div layout className="mt-9 w-full max-w-sm space-y-7">
-          {lines.slice(0, Math.min(shown, 3)).map((line) => (
+          {lines.slice(0, shown).map((line) => (
             <motion.p
               key={line.lead}
               layout
@@ -180,18 +175,6 @@ function MobileFeatures() {
               <span className="text-slate">{line.body}</span>
             </motion.p>
           ))}
-
-          {shown >= 4 && (
-            <motion.p
-              layout
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.75, ease: [0.23, 1, 0.32, 1] }}
-              className="text-left text-[19px] font-medium leading-snug text-royal"
-            >
-              {CLOSER}
-            </motion.p>
-          )}
         </motion.div>
       </div>
     </div>
@@ -217,7 +200,6 @@ function StaticFeatures() {
               <span className="text-slate">{line.body}</span>
             </p>
           ))}
-          <p className="text-lg font-medium text-royal">{CLOSER}</p>
         </div>
       </div>
     </section>

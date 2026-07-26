@@ -1,4 +1,5 @@
 import { PhoneCall } from "@phosphor-icons/react";
+import { motion, useReducedMotion } from "motion/react";
 import Orb from "../components/Orb";
 
 /*
@@ -10,10 +11,30 @@ import Orb from "../components/Orb";
   into the cream below rather than starting on a visible edge. A second
   radial sits behind the orb so the glow reads as coming off the orb
   itself.
+
+  On phones it is pulled up under the feature section, which is pinned to
+  a full viewport and therefore leaves height below its last line that no
+  amount of padding can reclaim. Heading, orb, and button then rise in
+  sequence as the section arrives, so the space reads as an entrance
+  rather than a gap.
 */
+const rise = {
+  initial: { opacity: 0, y: 26 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.5 },
+};
+
+const ease = [0.23, 1, 0.32, 1] as const;
+
 export default function Demo() {
+  const reduce = useReducedMotion();
+  const anim = reduce ? {} : rise;
+
   return (
-    <section id="demo" className="relative scroll-mt-16 overflow-hidden py-14 md:py-28">
+    <section
+      id="demo"
+      className="relative -mt-28 scroll-mt-16 overflow-hidden pb-16 pt-0 md:mt-0 md:pb-28 md:pt-24"
+    >
       <div
         aria-hidden
         className="absolute inset-0"
@@ -32,19 +53,31 @@ export default function Demo() {
       />
 
       <div className="relative mx-auto flex max-w-6xl flex-col items-center px-4 sm:px-6">
-        <h2 className="text-center text-3xl font-semibold tracking-tight md:text-4xl">
+        <motion.h2
+          {...anim}
+          transition={{ duration: 0.85, ease }}
+          className="text-center text-3xl font-semibold tracking-tight md:text-4xl"
+        >
           Call our AI voice agent live.
-        </h2>
-        <div className="mt-10 md:mt-14">
+        </motion.h2>
+
+        <motion.div
+          {...anim}
+          transition={{ duration: 0.9, delay: 0.12, ease }}
+          className="mt-9 md:mt-14"
+        >
           <Orb />
-        </div>
-        <button
+        </motion.div>
+
+        <motion.button
+          {...anim}
+          transition={{ duration: 0.8, delay: 0.24, ease }}
           type="button"
-          className="mt-10 inline-flex items-center gap-2.5 rounded-full bg-royal px-7 py-3.5 font-medium text-cream transition-transform duration-150 ease-[var(--ease-out)] hover:bg-royal-deep active:scale-[0.97] md:mt-14"
+          className="mt-9 inline-flex items-center gap-2.5 rounded-full bg-royal px-7 py-3.5 font-medium text-cream transition-transform duration-150 ease-[var(--ease-out)] hover:bg-royal-deep active:scale-[0.97] md:mt-14"
         >
           <PhoneCall size={19} weight="fill" />
           Call Agent
-        </button>
+        </motion.button>
       </div>
     </section>
   );

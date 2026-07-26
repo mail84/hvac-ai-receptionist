@@ -1,0 +1,16 @@
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+*.swp
+
+# Local env
+.env
+.env.local
+.env.*.local
+
+# Playwright working artifacts
+.playwright-mcp/

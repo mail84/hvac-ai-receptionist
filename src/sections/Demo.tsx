@@ -1,6 +1,7 @@
 import { PhoneCall } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
 import Orb from "../components/Orb";
+import { PHONE_HREF, PHONE_DISPLAY } from "../config";
 
 /*
   Demo centerpiece: the orb alone, one action under it. The call button is
@@ -69,15 +70,16 @@ export default function Demo() {
           <Orb />
         </motion.div>
 
-        <motion.button
+        <motion.a
           {...anim}
           transition={{ duration: 0.8, delay: 0.24, ease }}
-          type="button"
+          href={PHONE_HREF}
           className="mt-9 inline-flex items-center gap-2.5 rounded-full bg-royal px-7 py-3.5 font-medium text-cream transition-transform duration-150 ease-[var(--ease-out)] hover:bg-royal-deep active:scale-[0.97] md:mt-14"
         >
           <PhoneCall size={19} weight="fill" />
           Call Agent
-        </motion.button>
+        </motion.a>
+        <p className="mt-4 text-sm text-slate">{PHONE_DISPLAY}</p>
       </div>
     </section>
   );

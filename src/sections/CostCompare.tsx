@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
 import { Check, X } from "@phosphor-icons/react";
+import BookButton from "../components/BookButton";
 
 /*
   Head-to-head comparison. Each capability is one row read straight across:
@@ -77,15 +77,10 @@ export default function CostCompare() {
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 rounded-2xl bg-royal px-7 py-6 text-cream md:flex-row md:px-8">
           <p className="text-lg font-medium md:text-xl">
-            Around <span className="font-semibold">$102,000 saved per year</span>, before
-            counting the calls you stop missing.
+            Around <span className="font-semibold">$200,000 saved per year</span> with our
+            AI system in place.
           </p>
-          <Link
-            to="/contact"
-            className="shrink-0 rounded-full bg-cream px-6 py-3 text-sm font-semibold text-royal transition-transform duration-150 ease-[var(--ease-out)] active:scale-[0.97]"
-          >
-            Book Free Audit
-          </Link>
+          <BookButton className="shrink-0 rounded-full bg-cream px-6 py-3 text-sm font-semibold text-royal transition-transform duration-150 ease-[var(--ease-out)] active:scale-[0.97]" />
         </div>
       </div>
     </section>

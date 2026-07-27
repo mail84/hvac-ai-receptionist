@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import BookButton from "../components/BookButton";
 import { CalendarCheck, Siren, UserCheck } from "@phosphor-icons/react";
 import Orb from "../components/Orb";
 
@@ -55,12 +55,7 @@ export default function Solutions() {
       </div>
 
       <div className="mt-14 text-center">
-        <Link
-          to="/contact"
-          className="inline-block rounded-full bg-royal px-8 py-4 font-medium text-cream transition-[background-color,transform] hover:bg-royal-deep active:scale-[0.98]"
-        >
-          Book Free Audit
-        </Link>
+        <BookButton className="inline-block rounded-full bg-royal px-8 py-4 font-medium text-cream transition-[background-color,transform] hover:bg-royal-deep active:scale-[0.98]" />
       </div>
     </div>
   );

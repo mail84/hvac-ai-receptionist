@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+import { PHONE_HREF } from "../config";
+import BookButton from "../components/BookButton";
+import { Stars } from "../components/ReviewCard";
 
 /*
   Full-bleed background video hero, left-aligned content.
@@ -46,25 +48,34 @@ export default function Hero() {
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-16 pt-14 sm:px-6 md:pt-20">
         <div className="max-w-3xl">
           <h1 className="text-4xl font-semibold leading-[1.06] tracking-tight md:text-5xl lg:text-[3.4rem]">
-            The complete AI front desk for HVAC companies
+            The complete AI system for HVAC companies
           </h1>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-slate">
-            Answers every call, texts back the ones you miss, books jobs online,
-            and earns you reviews after each one.
+            Handles your front desk 24/7, follows up right away, books more jobs
+            online, and earns you reviews after each one.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a
-              href="/#demo"
+              href={PHONE_HREF}
               className="rounded-full bg-royal px-7 py-3.5 font-medium text-cream transition-[background-color,transform] hover:bg-royal-deep active:scale-[0.98]"
             >
               Talk to our AI
             </a>
-            <Link
-              to="/contact"
+            <BookButton
               className="rounded-full border border-ink/15 bg-cream/80 px-7 py-3.5 font-medium text-ink backdrop-blur transition-[background-color,transform] hover:bg-cream active:scale-[0.98]"
             >
               Talk to Sales
-            </Link>
+            </BookButton>
+          </div>
+
+          {/* Frosted badge. Kept to one line so it reads as a credential
+              under the buttons rather than a second block of hero copy. */}
+          <div className="mt-7 inline-flex items-center gap-3 rounded-full border border-white/50 bg-white/45 py-2.5 pl-4 pr-5 backdrop-blur-md">
+            <Stars rating={5} size={16} />
+            <span className="text-sm text-ink">
+              <span className="font-semibold">4.9</span> rating from{" "}
+              <span className="font-semibold">120+</span> HVAC businesses
+            </span>
           </div>
         </div>
       </div>

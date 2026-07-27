@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { List, X } from "@phosphor-icons/react";
+import BookButton from "./BookButton";
 
 /* TODO: swap the orb mark for the real logo file once provided. */
 function Wordmark() {
@@ -50,12 +51,7 @@ export default function Nav() {
           >
             Sign In
           </button>
-          <Link
-            to="/contact"
-            className="rounded-full bg-royal px-5 py-2.5 text-sm font-medium text-cream transition-[background-color,transform] hover:bg-royal-deep active:scale-[0.98]"
-          >
-            Book Free Audit
-          </Link>
+          <BookButton className="rounded-full bg-royal px-5 py-2.5 text-sm font-medium text-cream transition-[background-color,transform] hover:bg-royal-deep active:scale-[0.98]" />
         </div>
 
         <button
@@ -88,13 +84,7 @@ export default function Nav() {
             >
               Sign In
             </button>
-            <Link
-              to="/contact"
-              onClick={() => setOpen(false)}
-              className="mt-2 rounded-full bg-royal px-5 py-3 text-center text-[15px] font-medium text-cream"
-            >
-              Book Free Audit
-            </Link>
+            <BookButton className="mt-2 block rounded-full bg-royal px-5 py-3 text-center text-[15px] font-medium text-cream" />
           </div>
         </div>
       )}
